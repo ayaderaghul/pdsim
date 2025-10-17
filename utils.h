@@ -6,7 +6,7 @@
 
 
 
-float computeAvgPopPayoff(Agent pop[POP_SIZE]);
+float computeAvgPopPayoffScaled(Agent pop[POP_SIZE]);
 int *findUnderplayed(Agent pop[POP_SIZE], int *size);
 Agent *collectUnderplayedAgents(Agent *pop, int *indexes, int poolSize);
 void shufflePool(Agent *pool, int poolSize);
