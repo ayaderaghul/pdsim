@@ -134,11 +134,11 @@ void playOneRound(float pp1, float pp2, Agent *a, Agent *b)
         ((b->accumAvgPayoff * b->roundsPlayed) + (payoffB - cost)) / (b->roundsPlayed + 1);
     b->roundsPlayed++;
 
-    printf("Round %d:pp1 pp2: %.2f %.2f, move: %d vs %d, %d - %d, payoff: %d %d, accumAvgPayoff: %.2f %.2f\n", 
-        a->roundsPlayed,
-        pp1, pp2, moveA, moveB,
-        a->lastRound, b->lastRound, payoffA, payoffB, 
-        a->accumAvgPayoff, b->accumAvgPayoff);
+   // printf("Round %d:pp1 pp2: %.2f %.2f, move: %d vs %d, %d - %d, payoff: %d %d, accumAvgPayoff: %.2f %.2f\n", 
+     //   a->roundsPlayed,
+     //   pp1, pp2, moveA, moveB,
+     //   a->lastRound, b->lastRound, payoffA, payoffB, 
+     //   a->accumAvgPayoff, b->accumAvgPayoff);
 
         
     // printAgent(a);

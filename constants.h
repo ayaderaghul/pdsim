@@ -5,7 +5,7 @@
 #define GRID_SIZE 10
 #define POP_SIZE (GRID_SIZE * GRID_SIZE)
 #define ROUNDS 100
-#define CYCLE 10000
+#define CYCLE 4000
 #define DCOST 0.0f // 0.005f
 
 // Payoff values

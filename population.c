@@ -9,9 +9,9 @@ void matchPopulation(Agent pop[POP_SIZE]) {
         for (int j = 0; j < GRID_SIZE; j=j+2) {
             // match with right neighbor
             if (j + 1 < GRID_SIZE) {
-                printf("Play rounds: i & j: %d %d:\n", i, j);
+               // printf("Play rounds: i & j: %d %d:\n", i, j);
                 playRounds(&pop[i*GRID_SIZE+j], &pop[i*GRID_SIZE+j+1]);
-                printf("\n");
+               // printf("\n");
             }
         }
     }
@@ -29,6 +29,8 @@ void rematchPool(Agent* pool, int poolSize) {
 void refillPopulation(Agent* pop, Agent* pool, int* indexes, int poolSize) {
     for (int i = 0; i < poolSize; i++) {
         pop[indexes[i]] = pool[i]; // overwrite with updated agent
+	pop[indexes[i]].x = i / GRID_SIZE;
+	pop[indexes[i]].y=i%GRID_SIZE;
     }
 }
 
@@ -63,6 +65,8 @@ void regenerate(Agent pop[POP_SIZE]) {
         newPop[k].accumAvgPayoff = 0.0f;
         newPop[k].roundsPlayed = 0;
         newPop[k].lastRound = OUTCOME_DD;
+	newPop[k].x= k/GRID_SIZE;
+	newPop[k].y=k%GRID_SIZE;
     }
 
     // Step 4: overwrite old population
