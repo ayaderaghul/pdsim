@@ -63,6 +63,7 @@ void regenerate(Agent pop[POP_SIZE]) {
 
         // Reset state for next generation
         newPop[k].accumAvgPayoff = 0.0f;
+printf("rounds play %d: %d\n", k, newPop[k].roundsPlayed);
         newPop[k].roundsPlayed = 0;
         newPop[k].lastRound = OUTCOME_DD;
 	newPop[k].x= k/GRID_SIZE;

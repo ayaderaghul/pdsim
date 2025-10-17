@@ -25,7 +25,7 @@ Agent makeRandomAgent(int x, int y)
     a.accumAvgPayoff = 0.0f;
     a.x = x;
     a.y = y;
-    a.propToPlay = 1.0f;
+    //a.propToPlay = 1.0f;
     a.roundsPlayed = 0;       // FIX: initialize
     a.lastRound = OUTCOME_DD; // FIX: sane default
     return a;
@@ -42,7 +42,7 @@ void printAgent(Agent *ag)
            ag->pn1, ag->pn2, ag->pn3, ag->pn4);
 
     printf("accumAvgPayoff=%.2f\n", ag->accumAvgPayoff);
-    printf("propToPlay: %.2f\n", ag->propToPlay);
+    //printf("propToPlay: %.2f\n", ag->propToPlay);
     printf("roundsPlayed: %d\n", ag->roundsPlayed);
     printf("\n");
 }
@@ -64,8 +64,8 @@ int continueRound(Agent *a, Agent *b, int round)
     if (round == 1)
         return 1; // always play first round
 
-    float p1 = (0.4f * a->accumAvgPayoff + 0.6f * avgPopPayoff) / 4.0f;
-    float p2 = (0.4f * b->accumAvgPayoff + 0.6f * avgPopPayoff) / 4.0f;
+    float p1 = (0.4f * a->accumAvgPayoff + 0.6f * avgPopPayoff + 3 - a->accumAvgPayoff) / 4.0f;
+    float p2 = (0.4f * b->accumAvgPayoff + 0.6f * avgPopPayoff + 3 - b->accumAvgPayoff) / 4.0f;
 
     // clamp to [0,1]
     if (p1 < 0.0f)

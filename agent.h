@@ -24,7 +24,7 @@ typedef struct
     int x, y; // grid coor
 
     // propensity to continue to play the next round or not
-    float propToPlay;
+    //float propToPlay;
 
     Outcome lastRound;
     int roundsPlayed;
