@@ -36,6 +36,8 @@ void printAgent(Agent *ag);
 
 float distanceCost(Agent *a, Agent *b);
 int continueRound(Agent *a, Agent *b, int round);
+int continueRound2(Agent *a, Agent *b, int round);
+
 void playOneRound(float pp1, float pp2, Agent *a, Agent *b);
 void playRounds(Agent *a, Agent *b);
 

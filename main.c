@@ -6,11 +6,34 @@
 #include "population.h"
 #include "utils.h"
 
+// Save population to a single binary file, appending each cycle's data
+void savePopulation(const Agent pop[POP_SIZE], int cycle) {
+    FILE *fp = fopen("populations2.bin", "ab"); // append binary mode
+    if (!fp) {
+        perror("Failed to open populations.bin for writing");
+        return;
+    }
 
+    // Write a header (cycle number) before each population
+    if (fwrite(&cycle, sizeof(int), 1, fp) != 1) {
+        perror("Failed to write cycle header");
+        fclose(fp);
+        return;
+    }
+
+    // Write all agents
+    size_t written = fwrite(pop, sizeof(Agent), POP_SIZE, fp);
+    if (written != POP_SIZE) {
+        fprintf(stderr, "Warning: only wrote %zu/%d agents at cycle %d\n", written, POP_SIZE, cycle);
+    }
+
+    fclose(fp);
+    printf("✅ Saved population for cycle %d\n", cycle);
+}
 
 int main(void) {
 
-    FILE *fp = fopen("avgPayoff.csv", "w");
+    FILE *fp = fopen("avgPayoff6.csv", "w");
     if (!fp) {
         perror("Failed to open file");
         return 1;
@@ -33,46 +56,49 @@ int main(void) {
 
     // --- Simulation loop ---
     for (int c = 0; c < CYCLE; c++) {
+        printf("CYCLE %d\n", c);
+
         matchPopulation(population);
 
+        
+        // // --- Selection and replacement ---
+        // int size = 0;
+        // int *lst = findUnderplayed(population, &size);
+        // if (lst == NULL || size == 0) {
+        //     printf("No underplayed agents found in cycle %d.\n", c);
+        //     continue;
+        // }
+
+        // Agent *pool = collectUnderplayedAgents(population, lst, size);
+        // if (pool == NULL) {
+        //     free(lst);
+        //     continue;
+        // }
+
+        // shufflePool(pool, size);
+        // rematchPool(pool, size);
+        // refillPopulation(population, pool, lst, size);
+
+        // free(pool);
+        // free(lst);
+        
         // Compute average payoff
-        avgPopPayoff = computeAvgPopPayoff(population);
+        avgPopPayoff = computeAvgPopPayoffScaled(population);
         // Write to CSV
         fprintf(fp, "%d,%.4f\n", c, avgPopPayoff);
 
         printf("Average population payoff after cycle %d: %.2f\n", c, avgPopPayoff);
 
-        // --- Selection and replacement ---
-        int size = 0;
-        int *lst = findUnderplayed(population, &size);
-        if (lst == NULL || size == 0) {
-            printf("No underplayed agents found in cycle %d.\n", c);
-            continue;
-        }
-
-        Agent *pool = collectUnderplayedAgents(population, lst, size);
-        if (pool == NULL) {
-            free(lst);
-            continue;
-        }
-
-        shufflePool(pool, size);
-        rematchPool(pool, size);
-        refillPopulation(population, pool, lst, size);
-
-        free(pool);
-        free(lst);
-
         regenerate(population);
-        mutate(population);
-    }
-
-    printf("\nPrinting some resulting agents:");
-    for(int i = 0; i < 5; i++)  {
-        printAgent(&population[i]);
+        // mutate(population);
+        if (c % 200 == 0) {
+            savePopulation(population, c);
+        }
+        printf("END CYCLE %d\n----------------------------------------\n", c);
     }
     
     fclose(fp);
     printf("CSV saved to avgPayoff.csv\n");
+    
     return 0;
 }

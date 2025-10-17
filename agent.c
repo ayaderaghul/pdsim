@@ -11,12 +11,12 @@ float randFloat()
 Agent makeRandomAgent(int x, int y)
 {
     Agent a;
-    // a.p1 = randFloat();
-    // a.p2 = randFloat();
-    // a.p3 = randFloat();
-    a.p1 = 1.0;
-    a.p2=1.0;
-    a.p3=1.0;
+    a.p1 = randFloat();
+    a.p2 = randFloat();
+    a.p3 = randFloat();
+    // a.p1 = 1.0;
+    // a.p2=1.0;
+    // a.p3=1.0;
 
     a.pn1 = randFloat();
     a.pn2 = randFloat();
@@ -25,7 +25,6 @@ Agent makeRandomAgent(int x, int y)
     a.accumAvgPayoff = 0.0f;
     a.x = x;
     a.y = y;
-    //a.propToPlay = 1.0f;
     a.roundsPlayed = 0;       // FIX: initialize
     a.lastRound = OUTCOME_DD; // FIX: sane default
     return a;
@@ -33,17 +32,15 @@ Agent makeRandomAgent(int x, int y)
 
 void printAgent(Agent *ag)
 {
-    printf("Agent:\n");
-    printf("x, y: %d, %d\n", ag->x, ag->y);
+    printf("Agent: x, y: %d, %d. ", ag->x, ag->y);
 
-    printf("p1=%.2f p2=%.2f p3=%.2f\n", ag->p1, ag->p2, ag->p3);
+    printf("p1=%.2f p2=%.2f p3=%.2f. ", ag->p1, ag->p2, ag->p3);
 
-    printf("pn1=%.2f pn2=%.2f pn3=%.2f pn4=%.2f\n",
+    printf("pn1=%.2f pn2=%.2f pn3=%.2f pn4=%.2f. ",
            ag->pn1, ag->pn2, ag->pn3, ag->pn4);
 
-    printf("accumAvgPayoff=%.2f\n", ag->accumAvgPayoff);
-    //printf("propToPlay: %.2f\n", ag->propToPlay);
-    printf("roundsPlayed: %d\n", ag->roundsPlayed);
+    printf("accumAvgPayoff=%.2f. ", ag->accumAvgPayoff);
+    printf("roundsPlayed: %d.", ag->roundsPlayed);
     printf("\n");
 }
 
@@ -58,27 +55,50 @@ float distanceCost(Agent *a, Agent *b)
 
     return cost;
 }
+int continueRound(Agent *a, Agent *b, int round){
+    return 1;
+}
 
-int continueRound(Agent *a, Agent *b, int round)
+int continueRound2(Agent *a, Agent *b, int round)
 {
     if (round == 1)
         return 1; // always play first round
 
-    float p1 = (0.4f * a->accumAvgPayoff + 0.6f * avgPopPayoff + 3 - a->accumAvgPayoff) / 4.0f;
-    float p2 = (0.4f * b->accumAvgPayoff + 0.6f * avgPopPayoff + 3 - b->accumAvgPayoff) / 4.0f;
+    if (!a || !b) {
+        printf("ERROR: null agent pointer!\n");
+        return 0;
+    }
+
+    if (a == b) {
+        printf("WARNING: both agents are the same! a == b\n");
+    }
+
+    // Use float literals to avoid integer division
+    float p1 = 0.6 + 0.1f * a->accumAvgPayoff / 4.0f
+             + 0.1f * avgPopPayoff / 4.0f
+             + 0.1f * (3.0f - a->accumAvgPayoff);
+
+    float p2 = 0.6 + 0.1f * b->accumAvgPayoff / 4.0f
+             + 0.1f * avgPopPayoff / 4.0f
+             + 0.1f * (3.0f - b->accumAvgPayoff);
 
     // clamp to [0,1]
-    if (p1 < 0.0f)
-        p1 = 0.0f;
-    if (p1 > 1.0f)
-        p1 = 1.0f;
-    if (p2 < 0.0f)
-        p2 = 0.0f;
-    if (p2 > 1.0f)
-        p2 = 1.0f;
+    if (p1 < 0.0f) p1 = 0.0f;
+    if (p1 > 1.0f) p1 = 1.0f;
+    if (p2 < 0.0f) p2 = 0.0f;
+    if (p2 > 1.0f) p2 = 1.0f;
 
-    int res1 = randFloat() < p1;
-    int res2 = randFloat() < p2;
+    // DEBUG: print full internal state
+    // printf("DEBUG: round %d\n", round);
+    // printf("  a: accumAvgPayoff=%.2f, p1=%.3f, x=%d y=%d\n", a->accumAvgPayoff, p1, a->x, a->y);
+    // printf("  b: accumAvgPayoff=%.2f, p2=%.3f, x=%d y=%d\n", b->accumAvgPayoff, p2, b->x, b->y);
+    // printf("  avgPopPayoff=%.2f\n", avgPopPayoff);
+
+    int res1 = randFloat() < p1 ? 1 : 0;
+    int res2 = randFloat() < p2 ? 1 : 0;
+
+    // DEBUG: show random decision
+    // printf("  move: res1=%d vs res2=%d\n", res1, res2);
 
     return res1 && res2;
 }
@@ -134,13 +154,13 @@ void playOneRound(float pp1, float pp2, Agent *a, Agent *b)
         ((b->accumAvgPayoff * b->roundsPlayed) + (payoffB - cost)) / (b->roundsPlayed + 1);
     b->roundsPlayed++;
 
-   // printf("Round %d:pp1 pp2: %.2f %.2f, move: %d vs %d, %d - %d, payoff: %d %d, accumAvgPayoff: %.2f %.2f\n", 
-     //   a->roundsPlayed,
-     //   pp1, pp2, moveA, moveB,
-     //   a->lastRound, b->lastRound, payoffA, payoffB, 
-     //   a->accumAvgPayoff, b->accumAvgPayoff);
+    
+    // printf("Round %d:pp1 pp2: %.2f %.2f, move: %d vs %d, lastRound: %d - %d, payoff: %d %d, accumAvgPayoff: %.2f %.2f\n", 
+    //    a->roundsPlayed,
+    //    pp1, pp2, moveA, moveB,
+    //    a->lastRound, b->lastRound, payoffA, payoffB, 
+    //    a->accumAvgPayoff, b->accumAvgPayoff);
 
-        
     // printAgent(a);
     // printAgent(b);
 }
@@ -186,6 +206,10 @@ void playRounds(Agent *a, Agent *b) {
 			playOneRound(pp1,pp2,a,b);
 		}
 		i++;
+        // printf("\n---\nPlayRounds:\n");
+        // printAgent(a);
+        // printAgent(b);
+        
 	}
 
 }

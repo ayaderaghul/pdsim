@@ -4,7 +4,7 @@ import csv
 cycles = []
 avgPayoffs = []
 
-with open("avgPayoff.csv") as f:
+with open("avgPayoff6.csv") as f:
     reader = csv.DictReader(f)
     for row in reader:
         cycles.append(int(row["cycle"]))

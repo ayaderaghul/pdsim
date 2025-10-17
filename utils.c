@@ -5,22 +5,13 @@
 
 
 
-// compute average population payoff
-float computeAvgPopPayoff(Agent pop[POP_SIZE])
-{
-    float total = 0.0f;
-    int count = 0;
-
-    for (int i = 0; i < GRID_SIZE; i++)
-    {
-        for (int j = 0; j < GRID_SIZE; j++)
-        {
-            total += pop[i * GRID_SIZE + j].accumAvgPayoff;
-            count++;
-        }
+float computeAvgPopPayoffScaled(Agent pop[POP_SIZE]) {
+    float sum = 0.0f;
+    for (int i = 0; i < POP_SIZE; i++) {
+        if (pop[i].roundsPlayed > 0)
+            sum += pop[i].accumAvgPayoff; // already per-round
     }
-
-    return (count > 0) ? total / count : 0.0f;
+    return sum / POP_SIZE;
 }
 // find the one that underplay the first time
 
@@ -61,3 +52,5 @@ void shufflePool(Agent *pool, int poolSize)
         pool[j] = temp;
     }
 }
+
+
